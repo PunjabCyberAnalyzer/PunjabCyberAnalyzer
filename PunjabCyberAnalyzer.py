@@ -747,12 +747,14 @@ def login_page():
             key_data = load_key_data()
             current_time = datetime.now()
 
+            # Check if this is a cloud deployment and allow initial activation
+            is_cloud = os.environ.get("STREAMLIT_SERVER", "").lower() == "true"
             if license in key_data:
                 key_info = key_data[license]
                 stored_device_id = key_info.get("device_id")
                 activation_date = datetime.fromisoformat(key_info["activation_date"])
 
-                if stored_device_id and stored_device_id != device_id and "initial_activation" not in key_info:
+                if stored_device_id and stored_device_id != device_id and not (is_cloud and "initial_activation" not in key_info):
                     st.error("ACCESS DENIED: LICENSE KEY IS BOUND TO ANOTHER DEVICE")
                     return
                 if current_time > activation_date + timedelta(days=30):
@@ -763,7 +765,7 @@ def login_page():
                     "device_id": device_id,
                     "activation_date": current_time.isoformat(),
                     "last_accessed": current_time.isoformat(),
-                    "initial_activation": True
+                    "initial_activation": True if not is_cloud else False  # Skip initial binding for cloud
                 }
                 save_key_data(key_data)
 
