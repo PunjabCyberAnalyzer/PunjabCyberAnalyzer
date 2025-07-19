@@ -743,29 +743,18 @@ def login_page():
         if username not in OPERATOR_IDS or password not in PASSWORDS or license not in VALID_KEYS:
             st.error("ACCESS DENIED: INVALID CREDENTIALS OR LICENSE KEY")
         else:
-            device_id = get_device_id()
             key_data = load_key_data()
             current_time = datetime.now()
 
-            # Check if this is a cloud deployment and allow initial activation
-            is_cloud = os.environ.get("STREAMLIT_SERVER", "").lower() == "true"
             if license in key_data:
-                key_info = key_data[license]
-                stored_device_id = key_info.get("device_id")
-                activation_date = datetime.fromisoformat(key_info["activation_date"])
-
-                if stored_device_id and stored_device_id != device_id and not (is_cloud and "initial_activation" not in key_info):
-                    st.error("ACCESS DENIED: LICENSE KEY IS BOUND TO ANOTHER DEVICE")
-                    return
+                activation_date = datetime.fromisoformat(key_data[license]["activation_date"])
                 if current_time > activation_date + timedelta(days=30):
                     st.error("ACCESS DENIED: LICENSE KEY HAS EXPIRED")
                     return
             else:
                 key_data[license] = {
-                    "device_id": device_id,
                     "activation_date": current_time.isoformat(),
-                    "last_accessed": current_time.isoformat(),
-                    "initial_activation": True if not is_cloud else False  # Skip initial binding for cloud
+                    "last_accessed": current_time.isoformat()
                 }
                 save_key_data(key_data)
 
