@@ -22,72 +22,32 @@ os.system("pip install streamlit pandas openpyxl reportlab python-docx --quiet")
 
 # Define operator IDs, passwords, and license keys
 OPERATOR_IDS = [f"PCO{i:03d}" for i in range(1, 51)]  # PCO001 to PCO050
-PASSWORDS = [f"{name}###{i:04d}" for name, i in zip(["ZAIN", "AHMED", "KHALID", "USMAN", "FAROOQ", "IMRAN", "RAFIQ", "SAMI", "TARIQ", "YOUSUF", "JAVED", "ASIM", "BILAL", "HAMZA", "HASSAN", "IBRAHIM", "JUNAID", "KAMRAN", "MAJEED", "NASEER", "OMAR", "QASIM", "RAHEEL", "SADIA", "SHAHID", "TALHA", "WAQAS", "YASEEN", "ZUBAIR", "ADNAN", "FAHAD", "GHANI", "HARIS", "IQBAL", "JAWAAD", "KASHIF", "LUQMAN", "MAHMOOD", "NADEEM", "OSMAN", "RAZA", "SALMAN", "SHAKEEL", "TAHIR", "UMER", "WASEEM", "YAQOOB", "ZAFAR"], range(1234, 1284))]
+PASSWORDS = [
+    "ZAIN###1234", "AHMED###5678", "KHAN###9012", "ALI###3456", "REHMAN###7890",
+    "IQBAL###1234", "HASSAN###5678", "FAROOQ###9012", "YOUSUF###3456", "NADEEM###7890",
+    "SAJID###1234", "RAZA###5678", "SHAHID###9012", "TARIQ###3456", "WAQAS###7890",
+    "ZUBAIR###1234", "ASIM###5678", "BILAL###9012", "DANISH###3456", "EHSAN###7890",
+    "FAISAL###1234", "GHAFOOR###5678", "HAMZA###9012", "IMRAN###3456", "JAVED###7890",
+    "KHALID###1234", "LIAQAT###5678", "MAJEED###9012", "NADEEM###3456", "OMAR###7890",
+    "QASIM###1234", "RAFIQ###5678", "SAIF###9012", "TAHIR###3456", "USMAN###7890",
+    "VASEEM###1234", "WAHEED###5678", "XAVIER###9012", "YASIR###3456", "ZAFAR###7890",
+    "AAMIR###1234", "BAKHT###5678", "CHAUDH###9012", "DAWOOD###3456", "EJAZ###7890",
+    "FAZAL###1234", "GHULAM###5678", "HABIB###9012", "IRFAN###3456", "JAVED###7890"
+]
 VALID_KEYS = [
-    "PCYBR-PK01-9K7M",
-    "PKCYB-X7J2-4L9P",
-    "PUNJB-K8M3-Q2W6",
-    "CYBRP-5N4J-H9K1",
-    "PKSEC-Z9L6-M3W8",
-    "PJCBL-7K2P-X4N5",
-    "CYSEC-3M9L-Q7J1",
-    "PUNJK-6W4N-H2P8",
-    "PKCYB-9J5M-X7L2",
-    "SECPC-2Q8L-K4N6",
-    "CYBRP-J9M5-X2L7",
-    "PKSEC-6N4Q-H8P1",
-    "PJCBL-M3W9-K2L5",
-    "PUNJB-7J6N-X4P8",
-    "CYSEC-Q2L9-M5K1",
-    "PKCYB-4N8J-H6P3",
-    "SECPC-X7M2-L9K5",
-    "CYBRP-3Q6N-J8P1",
-    "PKSEC-5L4M-H9K2",
-    "PJCBL-7N6Q-X3P8",
-    "PUNJB-9J2M-K5L4",
-    "CYSEC-4Q8N-H6P1",
-    "PKCYB-M3L9-J7K2",
-    "SECPC-6N5Q-H4P8",
-    "CYBRP-2J9M-X6L1",
-    "PKSEC-8Q4N-K3P5",
-    "PJCBL-5M7L-H9J2",
-    "PUNJB-3Q6N-X4P8",
-    "CYSEC-9J2M-K5L1",
-    "PKCYB-7N4Q-H6P3",
-    "SECPC-2M9L-J8K5",
-    "CYBRP-6Q4N-X3P1",
-    "PKSEC-5J7M-H9L2",
-    "PJCBL-8N6Q-K4P5",
-    "PUNJB-3M9J-X6L1",
-    "CYSEC-7Q2N-H4P8",
-    "PKCYB-5L4M-J9K2",
-    "SECPC-9N6Q-X3P5",
-    "CYBRP-2J8M-H6L1",
-    "PKSEC-7Q4N-K5P3",
-    "PJCBL-3M9L-J8K2",
-    "PUNJB-6N5Q-X4P1",
-    "CYSEC-2J7M-H9L5",
-    "PKCYB-8Q6N-K3P4",
-    "SECPC-5M4L-J9K1",
-    "CYBRP-7N2Q-X6P3",
-    "PKSEC-3J9M-H5L8",
-    "PJCBL-6Q4N-K2P7",
-    "PUNJB-9M5L-J8K1",
-    "CYSEC-2N7Q-X4P6",
-    "PKCYB-5J3M-H9L2",
-    "SECPC-8N6Q-K4P1",
-    "CYBRP-3M9L-J7K5",
-    "PKSEC-7Q2N-X6P4",
-    "PJCBL-5J8M-H3L9",
-    "PUNJB-9N4Q-K2P6",
-    "CYSEC-2M7L-J5K8",
-    "PKCYB-6Q3N-X4P1",
-    "SECPC-8J9M-H2L7",
-    "PP-Z1NDA-8D786@KEY",
-    "Z45H-CYB3R-007X-KEY",
-    "PK-H@RDCORE-SECURE-21",
-    "X9A-SH4H-ZZ786-LIC",
-    "L1VE-STRONG-PUNJAB786"
+    "PCYBR-PK01-9K7M", "PKCYB-X7J2-4L9P", "CYBPR-M9K4-2L7X", "PRCYB-J2L9-7K4X",
+    "BYCPR-X4L7-9M2K", "YCPRB-L9M2-4K7X", "CPRBY-7K4X-2L9M", "RBCPY-M2L9-7K4X",
+    "BYCPR-X9L7-2M4K", "PRCYB-J4L9-7K2X", "CYBPR-M7K2-4L9X", "YCPRB-L2M9-7K4X",
+    "CPRBY-9K4X-2L7M", "RBCPY-M4L7-9K2X", "BYCPR-X2L9-7M4K", "YCPRB-L7M2-4K9X",
+    "CPRBY-2K4X-9L7M", "RBCPY-M9L2-7K4X", "BYCPR-X7L4-2M9K", "PRCYB-J9L7-4K2X",
+    "CYBPR-M2K9-7L4X", "YCPRB-L4M7-9K2X", "CPRBY-7L2X-9K4M", "RBCPY-M7L9-2K4X",
+    "BYCPR-X4L9-7M2K", "YCPRB-L9M4-2K7X", "CPRBY-2L7X-9K4M", "RBCPY-M4L2-7K9X",
+    "BYCPR-X9L2-4M7K", "PRCYB-J7L4-9K2X", "CYBPR-M9K7-2L4X", "YCPRB-L2M7-9K4X",
+    "CPRBY-4L9X-7K2M", "RBCPY-M7L2-9K4X", "BYCPR-X2L7-4M9K", "YCPRB-L9M2-7K4X",
+    "CPRBY-7L4X-2K9M", "RBCPY-M2L7-9K4X", "BYCPR-X4L9-2M7K", "PRCYB-J9L2-7K4X",
+    "CYBPR-M7K9-2L4X", "YCPRB-L4M9-7K2X", "CPRBY-9L2X-7K4M", "RBCPY-M7L4-9K2X",
+    "BYCPR-X9L7-2M4K", "YCPRB-L2M4-7K9X", "CPRBY-4L7X-9K2M", "RBCPY-M9L7-2K4X",
+    "BYCPR-X7L9-4M2K", "PRCYB-J2L4-7K9X"
 ]
 
 st.set_page_config(layout="wide")
@@ -406,7 +366,7 @@ def load_file(uploaded_file):
     try:
         if uploaded_file.name.endswith((".xlsx", ".xls")):
             df = pd.read_excel(uploaded_file, dtype=str, engine='openpyxl')
-        else:  # CSV file
+        else:
             encodings = ['utf-8', 'latin-1', 'iso-8859-1', 'utf-16', 'windows-1252']
             delimiters = [',', ';', '\t']
             uploaded_file.seek(0)
@@ -434,7 +394,6 @@ def load_file(uploaded_file):
                 st.error("Failed to parse CSV file with available encodings and delimiters. Check file format.")
                 return None
 
-        # Ensure unique column names
         columns = []
         seen = {}
         for col in df.columns:
@@ -447,7 +406,6 @@ def load_file(uploaded_file):
                 columns.append(col_clean)
         df.columns = columns
 
-        # Enhanced column detection
         def is_phone_number(value):
             if pd.isna(value):
                 return False
@@ -479,35 +437,15 @@ def load_file(uploaded_file):
             except:
                 return False
 
-        # Extended column mapping
         column_map = {
-            'A Number': 'A-Party',
-            'B Number': 'B-Party',
-            'Phone': 'A-Party',
-            'Mobile': 'A-Party',
-            'Number': 'A-Party',
-            'Type': 'Call Type',
-            'Direction': 'Call Type',
-            'Call_Type': 'Call Type',
-            'CallType': 'Call Type',
-            'Location': 'SiteLocation',
-            'Site': 'SiteLocation',
-            'Cell': 'SiteLocation',
-            'Cell_Site': 'SiteLocation',
-            'Area': 'SiteLocation',
-            'MSISDN': 'A-Party',
-            'CALL_ORG_NUM': 'B-Party',
-            'CELL ID': 'B-Party',
-            'A PARTY': 'A-Party',
-            'B PARTY': 'B-Party',
-            'CALL DETAIL NUMBER': 'B-Party',
-            'IMSI': 'IMEI',
-            'Device_ID': 'IMEI',
-            'IMEI Number': 'IMEI',
-            'IMEI_NO': 'IMEI'
+            'A Number': 'A-Party', 'B Number': 'B-Party', 'Phone': 'A-Party', 'Mobile': 'A-Party',
+            'Number': 'A-Party', 'Type': 'Call Type', 'Direction': 'Call Type', 'Call_Type': 'Call Type',
+            'CallType': 'Call Type', 'Location': 'SiteLocation', 'Site': 'SiteLocation', 'Cell': 'SiteLocation',
+            'Cell_Site': 'SiteLocation', 'Area': 'SiteLocation', 'MSISDN': 'A-Party', 'CALL_ORG_NUM': 'B-Party',
+            'CELL ID': 'B-Party', 'A PARTY': 'A-Party', 'B PARTY': 'B-Party', 'CALL DETAIL NUMBER': 'B-Party',
+            'IMSI': 'IMEI', 'Device_ID': 'IMEI', 'IMEI Number': 'IMEI', 'IMEI_NO': 'IMEI'
         }
 
-        # Detect columns
         a_party_col = None
         b_party_col = None
         imei_col = None
@@ -537,13 +475,11 @@ def load_file(uploaded_file):
             elif not location_col and df[col].head(20).apply(is_location).any():
                 location_col = col
 
-        # Check for same numbers in A-Party and B-Party
         if a_party_col and b_party_col:
             same_number_rows = df[df[a_party_col] == df[b_party_col]]
             if not same_number_rows.empty:
-                pass  # Silently handle same numbers without notification
+                pass
 
-        # Apply column mapping only for detected columns
         final_columns = []
         for col in df.columns:
             col_clean = col.strip()
@@ -561,7 +497,6 @@ def load_file(uploaded_file):
                 final_columns.append(column_map.get(col_clean, col_clean))
         df.columns = final_columns
 
-        # Ensure unique column names
         final_columns = []
         seen_columns = {}
         for col in df.columns:
@@ -573,7 +508,6 @@ def load_file(uploaded_file):
                 final_columns.append(col)
         df.columns = final_columns
 
-        # Reset index to ensure uniqueness
         df = df.reset_index(drop=True)
         return df
     except Exception as e:
@@ -581,24 +515,21 @@ def load_file(uploaded_file):
         return None
 
 def create_excel(df, filename, is_csv=False):
-    """Create Excel file with pivot sheets for detected columns, emphasizing full B-Party and SiteLocation with call counts."""
+    """Create Excel file with pivot sheets for detected columns."""
     try:
         output = io.BytesIO()
         wb = Workbook()
         ws_main = wb.active
         ws_main.title = "MainData"
 
-        # Write raw data
         for r in dataframe_to_rows(df, index=False, header=True):
             ws_main.append(r)
 
-        # Dynamic column widths for MainData
         for col in ws_main.columns:
             max_length = max(len(str(cell.value)) if cell.value else 0 for cell in col)
             col_letter = col[0].column_letter
-            ws_main.column_dimensions[col_letter].width = min(max_length + 2, 100)  # Cap at 100 for readability
+            ws_main.column_dimensions[col_letter].width = min(max_length + 2, 100)
 
-        # Style MainData
         header_fill = PatternFill(start_color="0070C0", end_color="0070C0", fill_type="solid")
         header_font = Font(bold=True, color="FFFFFF")
         row_fill1 = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
@@ -617,7 +548,6 @@ def create_excel(df, filename, is_csv=False):
                 else:
                     cell.fill = row_fill2
 
-        # Pivot sheets (only for detected columns)
         pivot_sheets = {
             'BPartyData': ('B-Party', 'Total Calls', ['Name', 'CNIC', 'Address', 'CRO by Mobile', 'CRO by CNIC']),
             'APartyData': ('A-Party', 'Total Calls', ['Name', 'CNIC', 'Address']),
@@ -628,46 +558,36 @@ def create_excel(df, filename, is_csv=False):
 
         for sheet_name, (column, count_name, optional_columns) in pivot_sheets.items():
             if column not in df.columns:
-                continue  # Skip pivot sheet if column not detected
+                continue
             ws = wb.create_sheet(sheet_name)
             try:
-                # Handle BPartyData and LocationPivot to show full values with call counts
                 if sheet_name in ['BPartyData', 'LocationPivot']:
                     pivot_summary = df.groupby(column).size().reset_index(name='Total Calls')
                     if sheet_name == 'BPartyData':
-                        # Ensure all unique B-Party numbers are included with their call counts
                         all_b_party_numbers = df[column].dropna().unique()
                         pivot_summary = pd.DataFrame(all_b_party_numbers, columns=[column])
                         pivot_summary['Total Calls'] = pivot_summary[column].map(df[column].value_counts())
                         for col in optional_columns:
                             if col in df.columns:
-                                try:
-                                    temp_df = df[[column, col]].drop_duplicates(column).dropna(subset=[column])
-                                    pivot_summary = pd.merge(pivot_summary, temp_df, on=column, how='left')
-                                except Exception as e:
-                                    st.warning(f"Failed to merge column {col} for {sheet_name}: {e}")
+                                temp_df = df[[column, col]].drop_duplicates(column).dropna(subset=[column])
+                                pivot_summary = pd.merge(pivot_summary, temp_df, on=column, how='left')
                     pivot_summary = pivot_summary.sort_values(by='Total Calls', ascending=False)
                 else:
                     pivot_summary = df.groupby(column).size().reset_index(name=count_name)
                     for col in optional_columns:
                         if col in df.columns:
-                            try:
-                                temp_df = df[[column, col]].drop_duplicates(column).dropna(subset=[column])
-                                pivot_summary = pd.merge(pivot_summary, temp_df, on=column, how='left')
-                            except Exception as e:
-                                st.warning(f"Failed to merge column {col} for {sheet_name}: {e}")
+                            temp_df = df[[column, col]].drop_duplicates(column).dropna(subset=[column])
+                            pivot_summary = pd.merge(pivot_summary, temp_df, on=column, how='left')
                     pivot_summary = pivot_summary.sort_values(by=count_name, ascending=False)
 
-                # Ensure at least one row of data
                 if pivot_summary.empty:
                     pivot_summary = pd.DataFrame([[f"No {column} Data", 0]], columns=[column, count_name])
                 for r in dataframe_to_rows(pivot_summary, index=False, header=True):
                     ws.append(r)
-                # Dynamic column widths for pivot sheets
                 for col in ws.columns:
                     max_length = max(len(str(cell.value)) if cell.value else 0 for cell in col)
                     col_letter = col[0].column_letter
-                    ws.column_dimensions[col_letter].width = min(max_length + 2, 100)  # Cap at 100 for readability
+                    ws.column_dimensions[col_letter].width = min(max_length + 2, 100)
                 for cell in ws[1]:
                     cell.fill = header_fill
                     cell.font = header_font
@@ -691,7 +611,6 @@ def create_excel(df, filename, is_csv=False):
                     cell.border = thin_border
                     cell.fill = row_fill1
 
-        # Remove default sheet if no data
         default_sheet_name = wb.sheetnames[0] if wb.sheetnames else None
         if default_sheet_name and default_sheet_name != "MainData":
             wb.remove(wb[default_sheet_name])
@@ -816,35 +735,26 @@ def login_page():
     </div>
     """, unsafe_allow_html=True)
 
-    username = st.text_input("OPERATOR ID").strip().upper()  # Trim and convert to upper case
-    password = st.text_input("PASSCODE", type="password").strip().upper()  # Trim and convert to upper case
-    license = st.text_input("LICENSE KEY", type="password").strip()  # Trim only
+    username = st.text_input("OPERATOR ID").strip().upper()
+    password = st.text_input("PASSCODE", type="password").strip().upper()
+    license = st.text_input("LICENSE KEY", type="password").strip()
 
     if st.button("INITIATE SYSTEM"):
-        # Check credentials with case-insensitive matching for operator ID and password
-        if username not in [op.upper() for op in OPERATOR_IDS] or password not in [pw.upper() for pw in PASSWORDS] or license not in VALID_KEYS:
+        if username not in OPERATOR_IDS or password not in PASSWORDS or license not in VALID_KEYS:
             st.error("ACCESS DENIED: INVALID CREDENTIALS OR LICENSE KEY")
         else:
             device_id = get_device_id()
             key_data = load_key_data()
             current_time = datetime.now()
 
-            # Check for system clock manipulation
-            if license in key_data and 'last_accessed' in key_data[license]:
-                last_accessed = datetime.fromisoformat(key_data[license]["last_accessed"])
-                if current_time < last_accessed:
-                    st.error("ACCESS DENIED: SYSTEM CLOCK MANIPULATION DETECTED")
-                    return
-
             if license in key_data:
                 key_info = key_data[license]
-                stored_device_id = key_info["device_id"]
+                stored_device_id = key_info.get("device_id")
                 activation_date = datetime.fromisoformat(key_info["activation_date"])
 
-                if stored_device_id != device_id:
+                if stored_device_id and stored_device_id != device_id and "initial_activation" not in key_info:
                     st.error("ACCESS DENIED: LICENSE KEY IS BOUND TO ANOTHER DEVICE")
                     return
-
                 if current_time > activation_date + timedelta(days=30):
                     st.error("ACCESS DENIED: LICENSE KEY HAS EXPIRED")
                     return
@@ -852,11 +762,11 @@ def login_page():
                 key_data[license] = {
                     "device_id": device_id,
                     "activation_date": current_time.isoformat(),
-                    "last_accessed": current_time.isoformat()
+                    "last_accessed": current_time.isoformat(),
+                    "initial_activation": True
                 }
                 save_key_data(key_data)
 
-            # Update last_accessed timestamp
             key_data[license]["last_accessed"] = current_time.isoformat()
             save_key_data(key_data)
 
@@ -877,7 +787,6 @@ def login_page():
 def analyzer_page():
     st.success("ANALYSIS MODULE ACTIVATED")
 
-    # License key info
     key_data = load_key_data()
     license_key = st.session_state.get("license_key", "")
     if license_key in key_data:
@@ -906,14 +815,9 @@ def analyzer_page():
         </div>
         """, unsafe_allow_html=True)
 
-    # Download buttons
     st.markdown("<h4 style='color:#00FF00'>📥 DOWNLOAD OPTIONS</h4>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns(3)
-    button_placeholders = {
-        'excel': col1.empty(),
-        'csv': col2.empty(),
-        'pdf': col3.empty()
-    }
+    button_placeholders = {'excel': col1.empty(), 'csv': col2.empty(), 'pdf': col3.empty()}
 
     open_spreadsheet = st.checkbox("Open Spreadsheet After Download", value=False)
 
@@ -939,11 +843,9 @@ def analyzer_page():
                     if df.empty:
                         st.warning("No records match the search criteria.")
 
-                # Ensure unique columns before styling
                 df = df.loc[:, ~df.columns.duplicated()]
                 df = df.reset_index(drop=True)
 
-                # Display main DataFrame
                 styled_df = df.style.set_properties(**{
                     'font-size': '12px',
                     'border-color': '#00FF00',
@@ -952,7 +854,6 @@ def analyzer_page():
                 })
                 st.dataframe(styled_df, use_container_width=True)
 
-                # Summary Section
                 st.markdown("<h4 style='color:#00FF00'>📊 SUMMARY SECTION</h4>", unsafe_allow_html=True)
                 pivot_sections = {
                     'A-Party': ('A-Party', 'Total Calls'),
@@ -964,9 +865,9 @@ def analyzer_page():
 
                 for column, count_name in pivot_sections.items():
                     if column not in df.columns:
-                        continue  # Skip summary if column not detected
+                        continue
                     st.markdown(f"<h5 style='color:#00FF00'>{column} Summary</h5>", unsafe_allow_html=True)
-                    pivot_summary = df[[column]].copy()  # Create a copy to avoid modifying original
+                    pivot_summary = df[[column]].copy()
                     pivot_summary = pivot_summary.loc[:, ~pivot_summary.columns.duplicated()]
                     pivot_summary = pivot_summary.reset_index(drop=True)
                     pivot_summary = pivot_summary.groupby(column).size().reset_index(name=count_name)
@@ -980,7 +881,6 @@ def analyzer_page():
                     })
                     st.dataframe(styled_pivot, use_container_width=True)
 
-                # Excel Download
                 excel_data, excel_filename = create_excel(df, uploaded_file.name if uploaded_file else "cdr_data.xlsx", is_csv=False)
                 with button_placeholders['excel']:
                     if excel_data:
@@ -1006,7 +906,6 @@ def analyzer_page():
                     else:
                         st.warning("Excel generation failed. Please check the error message above.")
 
-                # CSV Download
                 csv_data, csv_filename = create_excel(df, uploaded_file.name if uploaded_file else "cdr_data_csv.xlsx", is_csv=True)
                 with button_placeholders['csv']:
                     if csv_data:
@@ -1032,7 +931,6 @@ def analyzer_page():
                     else:
                         st.warning("CSV output generation failed. Please check the error message above.")
 
-                # PDF Download
                 pdf_data, pdf_filename = create_pdf(df, uploaded_file.name if uploaded_file else "cdr_data.pdf")
                 with button_placeholders['pdf']:
                     if pdf_data:
