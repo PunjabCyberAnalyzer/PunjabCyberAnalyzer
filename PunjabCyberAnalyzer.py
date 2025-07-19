@@ -18,6 +18,7 @@ import platform
 import tempfile
 
 # ====== RUNTIME DEPENDENCY FIX ======
+# test commit change
 os.system("pip install streamlit pandas openpyxl reportlab python-docx --quiet")
 
 # Define operator IDs, passwords, and license keys
