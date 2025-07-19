@@ -1,0 +1,203 @@
+VALID KEYS
+
+Operator IDs, Passwords, and Usernames
+Operator ID: PCO001
+Password: ZAIN###1234
+Username: PCO001
+License Key: PCYBR-PK01-9K7M-----done
+Operator ID: PCO002
+Password: AHMED###5678
+Username: PCO002
+License Key: PKCYB-X7J2-4L9P-----done
+Operator ID: PCO003
+Password: KHAN###9012
+Username: PCO003
+License Key: CYBPR-M9K4-2L7X
+Operator ID: PCO004
+Password: ALI###3456
+Username: PCO004
+License Key: PRCYB-J2L9-7K4X
+Operator ID: PCO005
+Password: REHMAN###7890
+Username: PCO005
+License Key: BYCPR-X4L7-9M2K
+Operator ID: PCO006
+Password: IQBAL###1234
+Username: PCO006
+License Key: YCPRB-L9M2-4K7X
+Operator ID: PCO007
+Password: HASSAN###5678
+Username: PCO007
+License Key: CPRBY-7K4X-2L9M
+Operator ID: PCO008
+Password: FAROOQ###9012
+Username: PCO008
+License Key: RBCPY-M2L9-7K4X
+Operator ID: PCO009
+Password: YOUSUF###3456
+Username: PCO009
+License Key: BYCPR-X9L7-2M4K
+Operator ID: PCO010
+Password: NADEEM###7890
+Username: PCO010
+License Key: PRCYB-J4L9-7K2X
+Operator ID: PCO011
+Password: SAJID###1234
+Username: PCO011
+License Key: CYBPR-M7K2-4L9X
+Operator ID: PCO012
+Password: RAZA###5678
+Username: PCO012
+License Key: YCPRB-L2M9-7K4X
+Operator ID: PCO013
+Password: SHAHID###9012
+Username: PCO013
+License Key: CPRBY-9K4X-2L7M
+Operator ID: PCO014
+Password: TARIQ###3456
+Username: PCO014
+License Key: RBCPY-M4L7-9K2X
+Operator ID: PCO015
+Password: WAQAS###7890
+Username: PCO015
+License Key: BYCPR-X2L9-7M4K
+Operator ID: PCO016
+Password: ZUBAIR###1234
+Username: PCO016
+License Key: YCPRB-L7M2-4K9X
+Operator ID: PCO017
+Password: ASIM###5678
+Username: PCO017
+License Key: CPRBY-2K4X-9L7M
+Operator ID: PCO018
+Password: BILAL###9012
+Username: PCO018
+License Key: RBCPY-M9L2-7K4X
+Operator ID: PCO019
+Password: DANISH###3456
+Username: PCO019
+License Key: BYCPR-X7L4-2M9K
+Operator ID: PCO020
+Password: EHSAN###7890
+Username: PCO020
+License Key: PRCYB-J9L7-4K2X
+Operator ID: PCO021
+Password: FAISAL###1234
+Username: PCO021
+License Key: CYBPR-M2K9-7L4X
+Operator ID: PCO022
+Password: GHAFOOR###5678
+Username: PCO022
+License Key: YCPRB-L4M7-9K2X
+Operator ID: PCO023
+Password: HAMZA###9012
+Username: PCO023
+License Key: CPRBY-7L2X-9K4M
+Operator ID: PCO024
+Password: IMRAN###3456
+Username: PCO024
+License Key: RBCPY-M7L9-2K4X
+Operator ID: PCO025
+Password: JAVED###7890
+Username: PCO025
+License Key: BYCPR-X4L9-7M2K
+Operator ID: PCO026
+Password: KHALID###1234
+Username: PCO026
+License Key: YCPRB-L9M4-2K7X
+Operator ID: PCO027
+Password: LIAQAT###5678
+Username: PCO027
+License Key: CPRBY-2L7X-9K4M
+Operator ID: PCO028
+Password: MAJEED###9012
+Username: PCO028
+License Key: RBCPY-M4L2-7K9X
+Operator ID: PCO029
+Password: NADEEM###3456
+Username: PCO029
+License Key: BYCPR-X9L2-4M7K
+Operator ID: PCO030
+Password: OMAR###7890
+Username: PCO030
+License Key: PRCYB-J7L4-9K2X
+Operator ID: PCO031
+Password: QASIM###1234
+Username: PCO031
+License Key: CYBPR-M9K7-2L4X
+Operator ID: PCO032
+Password: RAFIQ###5678
+Username: PCO032
+License Key: YCPRB-L2M7-9K4X
+Operator ID: PCO033
+Password: SAIF###9012
+Username: PCO033
+License Key: CPRBY-4L9X-7K2M
+Operator ID: PCO034
+Password: TAHIR###3456
+Username: PCO034
+License Key: RBCPY-M7L2-9K4X
+Operator ID: PCO035
+Password: USMAN###7890
+Username: PCO035
+License Key: BYCPR-X2L7-4M9K
+Operator ID: PCO036
+Password: VASEEM###1234
+Username: PCO036
+License Key: YCPRB-L9M2-7K4X
+Operator ID: PCO037
+Password: WAHEED###5678
+Username: PCO037
+License Key: CPRBY-7L4X-2K9M
+Operator ID: PCO038
+Password: XAVIER###9012
+Username: PCO038
+License Key: RBCPY-M2L7-9K4X
+Operator ID: PCO039
+Password: YASIR###3456
+Username: PCO039
+License Key: BYCPR-X4L9-2M7K
+Operator ID: PCO040
+Password: ZAFAR###7890
+Username: PCO040
+License Key: PRCYB-J9L2-7K4X
+Operator ID: PCO041
+Password: AAMIR###1234
+Username: PCO041
+License Key: CYBPR-M7K9-2L4X
+Operator ID: PCO042
+Password: BAKHT###5678
+Username: PCO042
+License Key: YCPRB-L4M9-7K2X
+Operator ID: PCO043
+Password: CHAUDH###9012
+Username: PCO043
+License Key: CPRBY-9L2X-7K4M
+Operator ID: PCO044
+Password: DAWOOD###3456
+Username: PCO044
+License Key: RBCPY-M7L4-9K2X
+Operator ID: PCO045
+Password: EJAZ###7890
+Username: PCO045
+License Key: BYCPR-X9L7-2M4K
+Operator ID: PCO046
+Password: FAZAL###1234
+Username: PCO046
+License Key: YCPRB-L2M4-7K9X
+Operator ID: PCO047
+Password: GHULAM###5678
+Username: PCO047
+License Key: CPRBY-4L7X-9K2M
+Operator ID: PCO048
+Password: HABIB###9012
+Username: PCO048
+License Key: RBCPY-M9L7-2K4X
+Operator ID: PCO049
+Password: IRFAN###3456
+Username: PCO049
+License Key: BYCPR-X7L9-4M2K
+Operator ID: PCO050
+Password: JAVED###7890
+Username: PCO050
+License Key: PRCYB-J2L4-7K9X
