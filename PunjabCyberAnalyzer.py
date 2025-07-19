@@ -20,11 +20,73 @@ import tempfile
 # ====== RUNTIME DEPENDENCY FIX ======
 os.system("pip install streamlit pandas openpyxl reportlab python-docx --quiet")
 
+# Define operator IDs, passwords, and license keys
+OPERATOR_IDS = [f"PCO{i:03d}" for i in range(1, 51)]  # PCO001 to PCO050
+PASSWORDS = [f"{name}###{i:04d}" for name, i in zip(["ZAIN", "AHMED", "KHALID", "USMAN", "FAROOQ", "IMRAN", "RAFIQ", "SAMI", "TARIQ", "YOUSUF", "JAVED", "ASIM", "BILAL", "HAMZA", "HASSAN", "IBRAHIM", "JUNAID", "KAMRAN", "MAJEED", "NASEER", "OMAR", "QASIM", "RAHEEL", "SADIA", "SHAHID", "TALHA", "WAQAS", "YASEEN", "ZUBAIR", "ADNAN", "FAHAD", "GHANI", "HARIS", "IQBAL", "JAWAAD", "KASHIF", "LUQMAN", "MAHMOOD", "NADEEM", "OSMAN", "RAZA", "SALMAN", "SHAKEEL", "TAHIR", "UMER", "WASEEM", "YAQOOB", "ZAFAR"], range(1234, 1284))]
 VALID_KEYS = [
-    "SHAH-KEY-786", "SHAH-KEY-999", "SHAH-KEY-333",
-    "SHAH-NEED-KEY",
-    "PP-Z1NDA-8D786@KEY", "Z45H-CYB3R-007X-KEY",
-    "PK-H@RDCORE-SECURE-21", "X9A-SH4H-ZZ786-LIC",
+    "PCYBR-PK01-9K7M",
+    "PKCYB-X7J2-4L9P",
+    "PUNJB-K8M3-Q2W6",
+    "CYBRP-5N4J-H9K1",
+    "PKSEC-Z9L6-M3W8",
+    "PJCBL-7K2P-X4N5",
+    "CYSEC-3M9L-Q7J1",
+    "PUNJK-6W4N-H2P8",
+    "PKCYB-9J5M-X7L2",
+    "SECPC-2Q8L-K4N6",
+    "CYBRP-J9M5-X2L7",
+    "PKSEC-6N4Q-H8P1",
+    "PJCBL-M3W9-K2L5",
+    "PUNJB-7J6N-X4P8",
+    "CYSEC-Q2L9-M5K1",
+    "PKCYB-4N8J-H6P3",
+    "SECPC-X7M2-L9K5",
+    "CYBRP-3Q6N-J8P1",
+    "PKSEC-5L4M-H9K2",
+    "PJCBL-7N6Q-X3P8",
+    "PUNJB-9J2M-K5L4",
+    "CYSEC-4Q8N-H6P1",
+    "PKCYB-M3L9-J7K2",
+    "SECPC-6N5Q-H4P8",
+    "CYBRP-2J9M-X6L1",
+    "PKSEC-8Q4N-K3P5",
+    "PJCBL-5M7L-H9J2",
+    "PUNJB-3Q6N-X4P8",
+    "CYSEC-9J2M-K5L1",
+    "PKCYB-7N4Q-H6P3",
+    "SECPC-2M9L-J8K5",
+    "CYBRP-6Q4N-X3P1",
+    "PKSEC-5J7M-H9L2",
+    "PJCBL-8N6Q-K4P5",
+    "PUNJB-3M9J-X6L1",
+    "CYSEC-7Q2N-H4P8",
+    "PKCYB-5L4M-J9K2",
+    "SECPC-9N6Q-X3P5",
+    "CYBRP-2J8M-H6L1",
+    "PKSEC-7Q4N-K5P3",
+    "PJCBL-3M9L-J8K2",
+    "PUNJB-6N5Q-X4P1",
+    "CYSEC-2J7M-H9L5",
+    "PKCYB-8Q6N-K3P4",
+    "SECPC-5M4L-J9K1",
+    "CYBRP-7N2Q-X6P3",
+    "PKSEC-3J9M-H5L8",
+    "PJCBL-6Q4N-K2P7",
+    "PUNJB-9M5L-J8K1",
+    "CYSEC-2N7Q-X4P6",
+    "PKCYB-5J3M-H9L2",
+    "SECPC-8N6Q-K4P1",
+    "CYBRP-3M9L-J7K5",
+    "PKSEC-7Q2N-X6P4",
+    "PJCBL-5J8M-H3L9",
+    "PUNJB-9N4Q-K2P6",
+    "CYSEC-2M7L-J5K8",
+    "PKCYB-6Q3N-X4P1",
+    "SECPC-8J9M-H2L7",
+    "PP-Z1NDA-8D786@KEY",
+    "Z45H-CYB3R-007X-KEY",
+    "PK-H@RDCORE-SECURE-21",
+    "X9A-SH4H-ZZ786-LIC",
     "L1VE-STRONG-PUNJAB786"
 ]
 
@@ -754,12 +816,13 @@ def login_page():
     </div>
     """, unsafe_allow_html=True)
 
-    username = st.text_input("OPERATOR ID")
-    password = st.text_input("PASSCODE", type="password")
-    license = st.text_input("LICENSE KEY", type="password")
+    username = st.text_input("OPERATOR ID").strip().upper()  # Trim and convert to upper case
+    password = st.text_input("PASSCODE", type="password").strip().upper()  # Trim and convert to upper case
+    license = st.text_input("LICENSE KEY", type="password").strip()  # Trim only
 
     if st.button("INITIATE SYSTEM"):
-        if username != "Punjab Cyber Analyzer" or password != "JAVED@@@7860" or license not in VALID_KEYS:
+        # Check credentials with case-insensitive matching for operator ID and password
+        if username not in [op.upper() for op in OPERATOR_IDS] or password not in [pw.upper() for pw in PASSWORDS] or license not in VALID_KEYS:
             st.error("ACCESS DENIED: INVALID CREDENTIALS OR LICENSE KEY")
         else:
             device_id = get_device_id()
