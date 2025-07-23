@@ -1,4 +1,15 @@
 import streamlit as st
+# Hide Streamlit's default "Fork me on GitHub" button
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    a[href^="https://github.com"] {visibility: hidden !important;}
+    .css-eczf16 {display: none !important;}  /* Sometimes GitHub link uses this */
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Set page configuration with viewport meta tag for mobile responsiveness
 st.set_page_config(
