@@ -1,4 +1,1 @@
-streamlit
-pandas
-openpyxl
-reportlab
+"streamlit>=1.0.0" 
