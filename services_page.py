@@ -1,21 +1,6 @@
-
 import streamlit as st
-# --- Hide GitHub Fork Button & Streamlit UI ---
-st.markdown("""
-    <style>
-    /* Hide GitHub Fork link */
-    a[href*="github.com"] {
-        display: none !important;
-    }
 
-    /* Optional: Hide Streamlit's hamburger menu and footer too */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    </style>
-""", unsafe_allow_html=True)
-
-# Page configuration
+# Set page configuration with viewport meta tag for mobile responsiveness
 st.set_page_config(
     page_title="Punjab Softwares - Advanced Technology Solutions",
     page_icon="🔧",
@@ -23,7 +8,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for professional theme with animations
+# Add viewport meta tag to ensure proper scaling on mobile devices
+st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+""", unsafe_allow_html=True)
+
+# Custom CSS with adjustments for mobile stability
 def load_css():
     st.markdown("""
     <style>
@@ -45,14 +35,18 @@ def load_css():
         text-align: center;
     }
     
+    html, body {
+        width: 100%;
+        overflow-x: hidden; /* Prevent horizontal scrolling */
+    }
+    
     .stApp {
         background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
         font-family: 'Inter', sans-serif;
         color: #ffffff;
         position: relative;
-        overflow-x: hidden;
         min-height: 100vh;
-        overflow-y: auto;
+        overflow-x: hidden; /* Ensure no horizontal overflow */
         scrollbar-width: thin;
         scrollbar-color: #888 #333;
     }
@@ -645,8 +639,17 @@ def load_css():
         transform: scale(1.2);
     }
     
-    /* Responsive design */
+    /* Enhanced responsive design for mobile */
     @media (max-width: 768px) {
+        html, body {
+            width: 100%;
+            overflow-x: hidden; /* Prevent horizontal scrolling on mobile */
+        }
+        
+        .stApp {
+            overflow-x: hidden; /* Ensure no horizontal overflow */
+        }
+        
         .company-name {
             font-size: 50px;
         }
@@ -702,6 +705,64 @@ def load_css():
         
         .social-icon {
             font-size: 24px;
+        }
+        
+        /* Ensure containers fit within viewport */
+        .section-container,
+        .name-section,
+        .hero-section,
+        .info-card,
+        .footer-section,
+        .footer-social-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 20px 10px;
+            margin: 0 auto;
+        }
+        
+        /* Adjust button sizes for mobile */
+        .custom-button {
+            font-size: 16px;
+            padding: 10px 20px;
+        }
+        
+        /* Ensure feature and contact cards fit on mobile */
+        .feature-card,
+        .highlighted-feature-card,
+        .contact-card {
+            max-width: 100%;
+            width: 100%;
+            padding: 20px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .company-name {
+            font-size: 36px;
+            letter-spacing: 2px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+        }
+        
+        .custom-button {
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+        }
+        
+        .logo-text h1 {
+            font-size: 24px;
+        }
+        
+        .logo-text p {
+            font-size: 14px;
         }
     }
     </style>
