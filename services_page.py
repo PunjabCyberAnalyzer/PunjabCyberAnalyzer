@@ -1,4 +1,19 @@
+
 import streamlit as st
+# --- Hide GitHub Fork Button & Streamlit UI ---
+st.markdown("""
+    <style>
+    /* Hide GitHub Fork link */
+    a[href*="github.com"] {
+        display: none !important;
+    }
+
+    /* Optional: Hide Streamlit's hamburger menu and footer too */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
 
 # Page configuration
 st.set_page_config(
