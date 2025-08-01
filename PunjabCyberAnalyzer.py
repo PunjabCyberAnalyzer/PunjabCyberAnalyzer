@@ -7,8 +7,9 @@ import csv
 from datetime import datetime, timedelta
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import PatternFill, Font, Border, Side
-from reportlab.lib.pagesizes import letter
+from openpyxl.styles import PatternFill, Font, Border, Side, Alignment
+from openpyxl.styles import numbers
+from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle as PDFTableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
@@ -16,13 +17,10 @@ import json
 import hashlib
 import platform
 import tempfile
-
-# ====== RUNTIME DEPENDENCY FIX ======
-# test commit change
-os.system("pip install streamlit pandas openpyxl reportlab python-docx --quiet")
+import atexit
 
 # Define operator IDs, passwords, and license keys
-OPERATOR_IDS = [f"PCO{i:03d}" for i in range(1, 51)]  # PCO001 to PCO050
+OPERATOR_IDS = [f"PCO{i:03d}" for i in range(1, 51)] # PCO001 to PCO050
 PASSWORDS = [
     "ZAIN###1234", "AHMED###5678", "KHAN###9012", "ALI###3456", "REHMAN###7890",
     "IQBAL###1234", "HASSAN###5678", "FAROOQ###9012", "YOUSUF###3456", "NADEEM###7890",
@@ -52,6 +50,7 @@ VALID_KEYS = [
 ]
 
 st.set_page_config(layout="wide")
+
 st.markdown("""
 <style>
 .stApp {
@@ -244,15 +243,17 @@ st.markdown("""
     margin: 10px auto !important;
     width: 320px !important;
     height: 60px !important;
-    border: 3px solid #00FF00 !important;
-    background: linear-gradient(135deg, #001F00 0%, #006400 50%, #001F00 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    background: rgba(0, 31, 0, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
     color: #00FF00 !important;
     font-family: 'Courier New' !important;
     font-size: 1.2rem !important;
     font-weight: bold !important;
     letter-spacing: 2px !important;
-    border-radius: 0 !important;
-    box-shadow: 0 0 20px #00FF00, inset 0 0 10px #00FF00 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3), inset 0 0 5px rgba(0, 255, 0, 0.2) !important;
     text-shadow: 0 0 8px #00FF00 !important;
     transition: all 0.3s !important;
     position: relative !important;
@@ -260,9 +261,9 @@ st.markdown("""
     z-index: 1 !important;
 }
 .stButton>button:hover {
-    background: linear-gradient(135deg, #00AA00 0%, #00FF00 50%, #00AA00 100%) !important;
+    background: rgba(0, 170, 0, 0.4) !important;
     color: #000 !important;
-    box-shadow: 0 0 30px #00FF00, inset 0 0 15px #00FF00 !important;
+    box-shadow: 0 6px 20px rgba(0, 255, 0, 0.5), inset 0 0 10px rgba(0, 255, 0, 0.3) !important;
     transform: scale(1.05) !important;
 }
 .stButton>button:active {
@@ -324,6 +325,112 @@ st.markdown("""
     animation: tacticalShine 4s infinite;
     z-index: 0;
 }
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+.loader {
+    border: 8px solid #00FF00;
+    border-top: 8px solid #000000;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.loader-text {
+    color: #00FF00;
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00FF00;
+    margin-top: 20px;
+    text-align: center;
+}
+.dataframe-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 10px 0;
+}
+.dataframe-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    color: #00FF00;
+    background-color: #000000;
+}
+.dataframe-container th, .dataframe-container td {
+    border: 2px solid #00FF00;
+    padding: 8px;
+    text-align: left;
+    white-space: nowrap;
+}
+.dataframe-container th {
+    background-color: #001F00;
+    font-weight: bold;
+}
+.dataframe-container tr:nth-child(even) {
+    background-color: #001F00;
+}
+.stTextInput input {
+    background: rgba(0, 31, 0, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    color: #00FF00 !important;
+    font-family: 'Courier New', monospace !important;
+    font-size: 1rem !important;
+    padding: 10px !important;
+    box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3) !important;
+    transition: all 0.3s !important;
+}
+.stTextInput input:focus {
+    border-color: rgba(0, 255, 0, 0.5) !important;
+    box-shadow: 0 6px 20px rgba(0, 255, 0, 0.5) !important;
+    background: rgba(0, 31, 0, 0.4) !important;
+}
+.stTextInput input::placeholder {
+    color: rgba(0, 255, 0, 0.5) !important;
+}
+.stTextInput label {
+    color: #00FF00 !important;
+    font-family: 'Courier New', monospace !important;
+    font-size: 1rem !important;
+    text-shadow: 0 0 5px #00FF00 !important;
+}
+.login-particle-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    z-index: 1;
+}
+.particle {
+    position: absolute;
+    background: #00FF00;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00FF00;
+    opacity: 0.7;
+    pointer-events: none;
+}
+@keyframes float {
+    0% { transform: translate(0, 0); opacity: 0.7; }
+    50% { opacity: 0.3; }
+    100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -361,10 +468,16 @@ def save_key_data(key_data):
 
 @st.cache_data
 def load_file(uploaded_file):
-    """Load and cache file data with enhanced column detection for Excel and CSV."""
+    """Load and process file to extract valid IMEI and IMSI numbers, and split Call Type into Incoming/Outgoing."""
     if uploaded_file is None:
         return None
     try:
+        # Validate file size (100MB limit)
+        max_size_mb = 100
+        if uploaded_file.size > max_size_mb * 1024 * 1024:
+            st.error(f"File size exceeds {max_size_mb}MB limit. Please upload a smaller file.")
+            return None
+        # Load file based on type
         if uploaded_file.name.endswith((".xlsx", ".xls")):
             df = pd.read_excel(uploaded_file, dtype=str, engine='openpyxl')
         else:
@@ -386,19 +499,25 @@ def load_file(uploaded_file):
                         )
                         if not df.empty:
                             break
-                    except Exception:
+                    except:
                         continue
                 else:
                     continue
                 break
             else:
-                st.error("Failed to parse CSV file with available encodings and delimiters. Check file format.")
+                st.error("Failed to parse CSV file. Check file format (e.g., correct delimiter, encoding).")
                 return None
-
+        # Remove 'Node ID' column if it exists (case-insensitive)
+        node_id_cols = [col for col in df.columns if col.strip().lower() == 'node id']
+        if node_id_cols:
+            df = df.drop(columns=node_id_cols)
+        # Clean column names and handle duplicates
         columns = []
         seen = {}
         for col in df.columns:
-            col_clean = col.strip()
+            col_clean = str(col).strip()
+            if pd.isna(col_clean) or col_clean == '':
+                col_clean = f"Unnamed_{len(seen)}"
             if col_clean in seen:
                 seen[col_clean] += 1
                 columns.append(f"{col_clean}_{seen[col_clean]}")
@@ -406,98 +525,121 @@ def load_file(uploaded_file):
                 seen[col_clean] = 0
                 columns.append(col_clean)
         df.columns = columns
-
+        # Define regex patterns for IMEI, IMSI, and other columns
+        def is_imei(value):
+            if pd.isna(value):
+                return False
+            value = str(value).strip()
+            return bool(re.match(r'^\d{15}$', value)) # Exactly 15 digits
+        def is_imsi(value):
+            if pd.isna(value):
+                return False
+            value = str(value).strip()
+            return bool(re.match(r'^410(01|03|04|06|07)\d{10}$', value)) # 410 + valid MNC + 10 digits
         def is_phone_number(value):
             if pd.isna(value):
                 return False
             value = str(value).strip()
             return bool(re.match(r'^(?:03\d{9}|(?:\+|00)923\d{9})$', value))
-
-        def is_imei(value):
-            if pd.isna(value):
-                return False
-            value = str(value).strip()
-            return bool(re.match(r'^\d{14,16}$', value))
-
         def is_call_type(value):
             if pd.isna(value):
                 return False
             value = str(value).strip().lower()
             return value in ['incoming', 'outgoing', 'missed', 'sms', 'data', 'voice', 'in', 'out']
-
         def is_location(value):
             if pd.isna(value):
                 return False
             value = str(value).strip()
             return bool(re.match(r'^[A-Za-z0-9\s,.-]+$', value)) and len(value) <= 100 and not value.isdigit()
-
         def is_mixed_type(column):
             try:
-                types = set(df[column].dropna().apply(lambda x: isinstance(x, str) and not is_phone_number(x)))
-                return len(types) > 1 or any(not is_phone_number(x) for x in df[column].dropna())
+                types = set(df[column].dropna().apply(lambda x: isinstance(x, str) and not is_phone_number(x) and not is_imei(x) and not is_imsi(x)))
+                return len(types) > 1 or any(not is_phone_number(x) and not is_imei(x) and not is_imsi(x) for x in df[column].dropna())
             except:
                 return False
-
+        # Column mapping for standardization
         column_map = {
             'A Number': 'A-Party', 'B Number': 'B-Party', 'Phone': 'A-Party', 'Mobile': 'A-Party',
             'Number': 'A-Party', 'Type': 'Call Type', 'Direction': 'Call Type', 'Call_Type': 'Call Type',
             'CallType': 'Call Type', 'Location': 'SiteLocation', 'Site': 'SiteLocation', 'Cell': 'SiteLocation',
             'Cell_Site': 'SiteLocation', 'Area': 'SiteLocation', 'MSISDN': 'A-Party', 'CALL_ORG_NUM': 'B-Party',
             'CELL ID': 'B-Party', 'A PARTY': 'A-Party', 'B PARTY': 'B-Party', 'CALL DETAIL NUMBER': 'B-Party',
-            'IMSI': 'IMEI', 'Device_ID': 'IMEI', 'IMEI Number': 'IMEI', 'IMEI_NO': 'IMEI'
+            'IMSI': 'IMSI', 'Device_ID': 'IMEI', 'IMEI Number': 'IMEI', 'IMEI_NO': 'IMEI'
         }
-
+        # Initialize column identifiers
         a_party_col = None
         b_party_col = None
         imei_col = None
+        imsi_col = None
         call_type_col = None
         location_col = None
-
+        # First pass: Exact and case-insensitive matches
         for col in df.columns:
             col_upper = col.strip().upper()
+            col_clean = col.strip()
             if col_upper in [k.upper() for k in column_map if column_map[k] == 'A-Party']:
-                a_party_col = col
+                a_party_col = col_clean
             elif col_upper in [k.upper() for k in column_map if column_map[k] == 'B-Party']:
-                b_party_col = col
+                b_party_col = col_clean
             elif col_upper in [k.upper() for k in column_map if column_map[k] == 'IMEI']:
-                imei_col = col
+                imei_col = col_clean
+            elif col_upper in [k.upper() for k in column_map if column_map[k] == 'IMSI']:
+                imsi_col = col_clean
             elif col_upper in [k.upper() for k in column_map if column_map[k] == 'Call Type']:
-                call_type_col = col
+                call_type_col = col_clean
             elif col_upper in [k.upper() for k in column_map if column_map[k] == 'SiteLocation']:
-                location_col = col
-            elif not a_party_col and df[col].head(20).apply(is_phone_number).any():
+                location_col = col_clean
+        # Second pass: Pattern-based detection for unmatched columns
+        for col in df.columns:
+            sample_data = df[col].head(100).dropna()
+            if not a_party_col and sample_data.apply(is_phone_number).sum() > len(sample_data) * 0.5:
                 a_party_col = col
-            elif not b_party_col and is_mixed_type(col):
+            elif not b_party_col and is_mixed_type(col) and sample_data.apply(is_phone_number).sum() > 0:
                 b_party_col = col
-            elif not imei_col and df[col].head(20).apply(is_imei).any():
+            elif not imei_col and sample_data.apply(is_imei).sum() > len(sample_data) * 0.5:
                 imei_col = col
-            elif not call_type_col and df[col].head(20).apply(is_call_type).any():
+            elif not imsi_col and sample_data.apply(is_imsi).sum() > len(sample_data) * 0.5:
+                imsi_col = col
+            elif not call_type_col and sample_data.apply(is_call_type).sum() > len(sample_data) * 0.5:
                 call_type_col = col
-            elif not location_col and df[col].head(20).apply(is_location).any():
+            elif not location_col and sample_data.apply(is_location).sum() > len(sample_data) * 0.5:
                 location_col = col
-
-        if a_party_col and b_party_col:
-            same_number_rows = df[df[a_party_col] == df[b_party_col]]
-            if not same_number_rows.empty:
-                pass
-
+        # Split Call Type into Incoming and Outgoing columns
+        if call_type_col:
+            df['Incoming Calls'] = df[call_type_col].apply(lambda x: 1 if pd.notna(x) and str(x).strip().lower() in ['incoming', 'in'] else 0)
+            df['Outgoing Calls'] = df[call_type_col].apply(lambda x: 1 if pd.notna(x) and str(x).strip().lower() in ['outgoing', 'out'] else 0)
+        # Validate and clean IMEI and IMSI columns
+        if imei_col:
+            df[imei_col] = df[imei_col].apply(lambda x: x if pd.notna(x) and is_imei(x) else pd.NA)
+        if imsi_col:
+            df[imsi_col] = df[imsi_col].apply(lambda x: x if pd.notna(x) and is_imsi(x) else pd.NA)
+        # Handle case where IMEI and IMSI are in the same column
+        if imei_col and imsi_col and imei_col == imsi_col:
+            df['IMEI'] = df[imei_col].apply(lambda x: x if pd.notna(x) and is_imei(x) else pd.NA)
+            df['IMSI'] = df[imei_col].apply(lambda x: x if pd.notna(x) and is_imsi(x) else pd.NA)
+            df = df.drop(columns=[imei_col])
+            imei_col = 'IMEI'
+            imsi_col = 'IMSI'
+        # Standardize column names
         final_columns = []
         for col in df.columns:
             col_clean = col.strip()
-            if col == a_party_col:
+            if col_clean == a_party_col:
                 final_columns.append('A-Party')
-            elif col == b_party_col:
+            elif col_clean == b_party_col:
                 final_columns.append('B-Party')
-            elif col == imei_col:
+            elif col_clean == imei_col:
                 final_columns.append('IMEI')
-            elif col == call_type_col:
+            elif col_clean == imsi_col:
+                final_columns.append('IMSI')
+            elif col_clean == call_type_col:
                 final_columns.append('Call Type')
-            elif col == location_col:
+            elif col_clean == location_col:
                 final_columns.append('SiteLocation')
             else:
                 final_columns.append(column_map.get(col_clean, col_clean))
         df.columns = final_columns
-
+        # Remove duplicates in column names
         final_columns = []
         seen_columns = {}
         for col in df.columns:
@@ -508,35 +650,57 @@ def load_file(uploaded_file):
                 seen_columns[col] = 0
                 final_columns.append(col)
         df.columns = final_columns
-
+        # Filter rows to keep only those with at least one valid data point
+        if 'IMEI' in df.columns or 'IMSI' in df.columns:
+            df = df[df[['IMEI', 'IMSI']].notna().any(axis=1) if 'IMEI' in df.columns and 'IMSI' in df.columns else
+                    df['IMEI'].notna() if 'IMEI' in df.columns else df['IMSI'].notna()]
         df = df.reset_index(drop=True)
         return df
     except Exception as e:
-        st.error(f"Failed to load file: {e}")
+        st.error(f"Failed to load file: {e}. Ensure the file contains valid IMEI (15 digits) or IMSI (410 + valid MNC + 10 digits).")
         return None
 
 def create_excel(df, filename, is_csv=False):
-    """Create Excel file with pivot sheets for detected columns."""
+    """Create Excel file with simplified pivot sheets (only column and count), optimized for A4 printing (landscape only)."""
     try:
         output = io.BytesIO()
         wb = Workbook()
         ws_main = wb.active
         ws_main.title = "MainData"
-
-        for r in dataframe_to_rows(df, index=False, header=True):
+        # Replace NA/None with empty string for Excel compatibility
+        df_clean = df.fillna('')
+        # Write MainData sheet
+        for r in dataframe_to_rows(df_clean, index=False, header=True):
             ws_main.append(r)
-
-        for col in ws_main.columns:
-            max_length = max(len(str(cell.value)) if cell.value else 0 for cell in col)
-            col_letter = col[0].column_letter
-            ws_main.column_dimensions[col_letter].width = min(max_length + 2, 100)
-
+        # Set column widths for MainData, skipping merged cells
+        for col_idx, col in enumerate(ws_main.columns, 1):
+            max_length = 0
+            for cell in col[1:]: # Skip row 1 (header, no merge)
+                try:
+                    if cell.value:
+                        max_length = max(max_length, len(str(cell.value)))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 30)
+            ws_main.column_dimensions[chr(64 + col_idx)].width = adjusted_width
+            for cell in col:
+                cell.alignment = Alignment(wrap_text=True, vertical='top')
+        ws_main.page_setup.orientation = 'landscape'
+        ws_main.page_setup.paperSize = 9 # A4
+        ws_main.page_setup.fitToPage = True
+        ws_main.page_setup.fitToWidth = 1
+        ws_main.page_setup.fitToHeight = False
+        ws_main.page_margins.left = 0.25
+        ws_main.page_margins.right = 0.25
+        ws_main.page_margins.top = 0.5
+        ws_main.page_margins.bottom = 0.5
+        ws_main.sheet_properties.pageSetUpPr.fitToPage = True
         header_fill = PatternFill(start_color="0070C0", end_color="0070C0", fill_type="solid")
         header_font = Font(bold=True, color="FFFFFF")
         row_fill1 = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
         row_fill2 = PatternFill(start_color="E6F0FA", end_color="E6F0FA", fill_type="solid")
         thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
-
+        highlight_fill = PatternFill(start_color="CCFFCC", end_color="CCFFCC", fill_type="solid") # Light green for top 5
         for cell in ws_main[1]:
             cell.fill = header_fill
             cell.font = header_font
@@ -548,58 +712,94 @@ def create_excel(df, filename, is_csv=False):
                     cell.fill = row_fill1
                 else:
                     cell.fill = row_fill2
-
         pivot_sheets = {
-            'BPartyData': ('B-Party', 'Total Calls', ['Name', 'CNIC', 'Address', 'CRO by Mobile', 'CRO by CNIC']),
-            'APartyData': ('A-Party', 'Total Calls', ['Name', 'CNIC', 'Address']),
-            'IMEISummary': ('IMEI', 'Count of IMEI', []),
-            'LocationPivot': ('SiteLocation', 'Total Calls', []),
-            'CallTypeSummary': ('Call Type', 'Count of Call Type', [])
+            'BPartyData': ('B-Party', 'Count', 'B-Party Communication Analysis'),
+            'APartyData': ('A-Party', 'Count', 'A-Party Communication Analysis'),
+            'IMEISummary': ('IMEI', 'Count', 'IMEI Usage Analysis'),
+            'IMSISummary': ('IMSI', 'Count', 'IMSI Usage Analysis'),
+            'LocationPivot': ('SiteLocation', 'Count', 'Location-Based Call Analysis'),
+            'CallTypeSummary': ('Call Type', 'Count', 'Call Type Distribution Analysis')
         }
-
-        for sheet_name, (column, count_name, optional_columns) in pivot_sheets.items():
+        for sheet_name, (column, count_name, title) in pivot_sheets.items():
             if column not in df.columns:
                 continue
             ws = wb.create_sheet(sheet_name)
             try:
-                if sheet_name in ['BPartyData', 'LocationPivot']:
-                    pivot_summary = df.groupby(column).size().reset_index(name='Total Calls')
-                    if sheet_name == 'BPartyData':
-                        all_b_party_numbers = df[column].dropna().unique()
-                        pivot_summary = pd.DataFrame(all_b_party_numbers, columns=[column])
-                        pivot_summary['Total Calls'] = pivot_summary[column].map(df[column].value_counts())
-                        for col in optional_columns:
-                            if col in df.columns:
-                                temp_df = df[[column, col]].drop_duplicates(column).dropna(subset=[column])
-                                pivot_summary = pd.merge(pivot_summary, temp_df, on=column, how='left')
-                    pivot_summary = pivot_summary.sort_values(by='Total Calls', ascending=False)
-                else:
-                    pivot_summary = df.groupby(column).size().reset_index(name=count_name)
-                    for col in optional_columns:
-                        if col in df.columns:
-                            temp_df = df[[column, col]].drop_duplicates(column).dropna(subset=[column])
-                            pivot_summary = pd.merge(pivot_summary, temp_df, on=column, how='left')
-                    pivot_summary = pivot_summary.sort_values(by=count_name, ascending=False)
-
+                # Create pivot summary with only the column and its count
+                pivot_summary = df.groupby(column).size().reset_index(name=count_name)
+                pivot_summary = pivot_summary.sort_values(by=count_name, ascending=False)
+                # Filter out invalid/empty entries
+                pivot_summary = pivot_summary[pivot_summary[count_name].notna() & (pivot_summary[count_name] > 0)]
+                # Replace NA/None with empty string for pivot sheet
+                pivot_summary = pivot_summary.fillna('')
                 if pivot_summary.empty:
-                    pivot_summary = pd.DataFrame([[f"No {column} Data", 0]], columns=[column, count_name])
+                    pivot_summary = pd.DataFrame([[f"No valid {column} data", 0]], columns=[column, count_name])
+                # Add title row
+                ws.append([title])
+                ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=2) # Merge across 2 columns
+                ws['A1'].font = Font(bold=True, size=14, color="000000")
+                ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+                ws['A1'].fill = PatternFill(start_color="CCFFCC", end_color="CCFFCC", fill_type="solid")
+                ws.row_dimensions[1].height = 30
+                # Add headers and data
                 for r in dataframe_to_rows(pivot_summary, index=False, header=True):
                     ws.append(r)
-                for col in ws.columns:
-                    max_length = max(len(str(cell.value)) if cell.value else 0 for cell in col)
-                    col_letter = col[0].column_letter
-                    ws.column_dimensions[col_letter].width = min(max_length + 2, 100)
-                for cell in ws[1]:
-                    cell.fill = header_fill
-                    cell.font = header_font
+                # Add total row
+                total_count = pivot_summary[count_name].sum()
+                ws.append(['Total', total_count])
+                # Format columns, skipping merged cells
+                for col_idx, col in enumerate(ws.columns, 1):
+                    max_length = 0
+                    for cell in col[1:]: # Skip row 1 (merged title)
+                        try:
+                            if cell.value:
+                                max_length = max(max_length, len(str(cell.value)))
+                        except:
+                            pass
+                    adjusted_width = min(max_length + 2, 25)
+                    ws.column_dimensions[chr(64 + col_idx)].width = adjusted_width
+                    for cell in col[1:]: # Start from row 2
+                        cell.alignment = Alignment(wrap_text=True, vertical='top')
+                        if cell.row == 2: # Header row
+                            cell.fill = header_fill
+                            cell.font = header_font
+                            cell.border = thin_border
+                        elif cell.row > 2: # Data rows
+                            cell.border = thin_border
+                            if ws.row_dimensions[cell.row].index % 2 == 0:
+                                cell.fill = row_fill1
+                            else:
+                                cell.fill = row_fill2
+                            # Apply number format to count column
+                            if cell.column == 2:
+                                cell.number_format = numbers.FORMAT_NUMBER
+                # Apply conditional formatting to highlight top 5 in count column
+                if len(pivot_summary) > 0:
+                    top_5_rows = pivot_summary.nlargest(5, count_name).index + 3 # +3 for title and header rows
+                    for row in range(3, min(len(pivot_summary) + 3, 8)): # Rows 3 to 7 for top 5
+                        if row in top_5_rows:
+                            for col in range(1, 3): # Only 2 columns
+                                ws.cell(row=row, column=col).fill = highlight_fill
+                # Set total row formatting
+                total_row_idx = ws.max_row
+                for col in range(1, 3): # Only 2 columns
+                    cell = ws.cell(row=total_row_idx, column=col)
+                    cell.font = Font(bold=True)
+                    cell.fill = PatternFill(start_color="FFFF99", end_color="FFFF99", fill_type="solid")
                     cell.border = thin_border
-                for row in ws.iter_rows(min_row=2, max_row=ws.max_row):
-                    for cell in row:
-                        cell.border = thin_border
-                        if ws.row_dimensions[cell.row].index % 2 == 0:
-                            cell.fill = row_fill1
-                        else:
-                            cell.fill = row_fill2
+                    if col == 2:
+                        cell.number_format = numbers.FORMAT_NUMBER
+                # Set A4 page setup
+                ws.page_setup.orientation = 'landscape'
+                ws.page_setup.paperSize = 9 # A4
+                ws.page_setup.fitToPage = True
+                ws.page_setup.fitToWidth = 1
+                ws.page_setup.fitToHeight = False
+                ws.page_margins.left = 0.25
+                ws.page_margins.right = 0.25
+                ws.page_margins.top = 0.5
+                ws.page_margins.bottom = 0.5
+                ws.sheet_properties.pageSetUpPr.fitToPage = True
             except Exception as e:
                 st.error(f"Error creating {sheet_name} sheet: {e}")
                 ws.append([f"Error processing {column} data"])
@@ -611,11 +811,9 @@ def create_excel(df, filename, is_csv=False):
                 for cell in ws[2]:
                     cell.border = thin_border
                     cell.fill = row_fill1
-
         default_sheet_name = wb.sheetnames[0] if wb.sheetnames else None
         if default_sheet_name and default_sheet_name != "MainData":
             wb.remove(wb[default_sheet_name])
-
         wb.save(output)
         output.seek(0)
         suffix = "_CSV" if is_csv else ""
@@ -625,39 +823,38 @@ def create_excel(df, filename, is_csv=False):
         return None, filename
 
 def create_pdf(df, filename):
-    """Create PDF file."""
+    """Create PDF file with up to 500 rows, optimized for A4 printing with minimal spacing."""
     try:
         pdf_buffer = io.BytesIO()
-        doc = SimpleDocTemplate(pdf_buffer, pagesize=letter, leftMargin=36, rightMargin=36, topMargin=72, bottomMargin=72)
-        
+        doc = SimpleDocTemplate(pdf_buffer, pagesize=A4, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(
             name='CyberTitle',
             fontName='Courier-Bold',
-            fontSize=16,
+            fontSize=12,
             textColor=colors.HexColor('#00FF00'),
             alignment=1,
-            spaceBefore=15,
-            spaceAfter=15,
+            spaceBefore=10,
+            spaceAfter=8,
             wordWrap='CJK'
         ))
         styles.add(ParagraphStyle(
             name='CyberHeader',
             fontName='Courier-Bold',
-            fontSize=10,
+            fontSize=8,
             textColor=colors.black,
             backColor=colors.white,
             alignment=1,
-            spaceBefore=5,
-            spaceAfter=5,
+            spaceBefore=3,
+            spaceAfter=3,
             wordWrap='CJK'
         ))
         styles.add(ParagraphStyle(
             name='CyberData',
             fontName='Courier',
-            fontSize=8,
+            fontSize=6,
             textColor=colors.black,
-            leading=9,
+            leading=7,
             spaceBefore=0,
             spaceAfter=0,
             wordWrap='CJK'
@@ -665,43 +862,42 @@ def create_pdf(df, filename):
         styles.add(ParagraphStyle(
             name='CyberMeta',
             fontName='Courier',
-            fontSize=10,
+            fontSize=8,
             textColor=colors.black,
-            spaceBefore=8,
-            spaceAfter=8
+            spaceBefore=5,
+            spaceAfter=5
         ))
-        
         elements = [
             Paragraph("⚡ PUNJAB CYBER ANALYZER REPORT ⚡", styles['CyberTitle']),
-            Spacer(1, 15),
+            Spacer(1, 8),
             Paragraph(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", styles['CyberMeta']),
             Paragraph(f"Records: {len(df):,}", styles['CyberMeta']),
             Paragraph(f"Source: {filename if filename else 'Unknown'}", styles['CyberMeta']),
-            Spacer(1, 25)
+            Spacer(1, 10)
         ]
-        
         if df is not None and not df.empty:
-            total_width = 523
-            num_cols = len(df.columns)
+            # Replace NA/None with empty string for PDF compatibility
+            df_clean = df.fillna('')
+            total_width = 555 # A4 width (595) - left margin (20) - right margin (20)
+            num_cols = len(df_clean.columns)
             col_width = total_width / num_cols if num_cols > 0 else total_width
-            main_data = [[Paragraph(f"<b>{col}</b>", styles['CyberHeader']) for col in df.columns]]
-            for _, row in df.fillna('').astype(str).head(100).iterrows():
-                data_row = [Paragraph(row[col][:30], styles['CyberData']) for col in df.columns]
+            main_data = [[Paragraph(f"<b>{col}</b>", styles['CyberHeader']) for col in df_clean.columns]]
+            for _, row in df_clean.astype(str).head(500).iterrows():
+                data_row = [Paragraph(row[col][:30], styles['CyberData']) for col in df_clean.columns]
                 main_data.append(data_row)
             main_table = Table(main_data, colWidths=[col_width] * num_cols, repeatRows=1)
             main_table.setStyle(PDFTableStyle([
                 ('BACKGROUND', (0,0), (-1,0), colors.white),
                 ('TEXTCOLOR', (0,0), (-1,-1), colors.black),
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
-                ('LEFTPADDING', (0,0), (-1,-1), 3),
-                ('RIGHTPADDING', (0,0), (-1,-1), 3),
-                ('TOPPADDING', (0,0), (-1,-1), 3),
-                ('BOTTOMPADDING', (0,0), (-1,-1), 3),
+                ('LEFTPADDING', (0,0), (-1,-1), 1),
+                ('RIGHTPADDING', (0,0), (-1,-1), 1),
+                ('TOPPADING', (0,0), (-1,-1), 1),
+                ('BOTTOMPADDING', (0,0), (-1,-1), 1),
                 ('GRID', (0,0), (-1,-1), 0.5, colors.black),
                 ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.lightgrey])
             ]))
             elements.append(main_table)
-        
         doc.build(elements)
         pdf_buffer.seek(0)
         return pdf_buffer, f"Punjab_Cyber_Analyzer_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
@@ -716,37 +912,61 @@ def login_page():
     <span style='font-size:1rem;'>INSPIRATION OF DIGITAL POWER AND Punjab Cyber Analyzer LEGACY</span><br>
     <span style='font-size:0.9rem;'>"We see through lies. We decode truth. We control digital warfare."</span>
     </div>
-    
     <div class="whatsapp-container">
         <a href="https://wa.me/923309653269" target="_blank" class="whatsapp-link">
             ⚡ WHATSAPP ME: <span style="text-shadow:0 0 8px #00FF00;">03309653269</span> ⚡
         </a>
     </div>
-    
     <div class="notice-container">
         <div class="notice-text">
             USE LAPTOP OR PC FOR BETTER VIEW
         </div>
     </div>
-    
     <div class="email-container">
         <a href="mailto:punjabcyberanalyzer@gmail.com" target="_blank" class="email-link">
             📧 CONTACT US: <span style="text-shadow:0 0 8px #00FF00;">punjabcyberanalyzer@gmail.com</span> 📧
         </a>
     </div>
+    <div class="login-particle-container" id="login-particle-container">
+        <!-- Login form will be rendered here -->
+    </div>
+    <script>
+        const particleContainer = document.getElementById('login-particle-container');
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 4 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            const tx = (Math.random() - 0.5) * 100;
+            const ty = (Math.random() - 0.5) * 100;
+            particle.style.setProperty('--tx', `${tx}px`);
+            particle.style.setProperty('--ty', `${ty}px`);
+            const duration = Math.random() * 3 + 2;
+            particle.style.animation = `float ${duration}s linear infinite`;
+            particleContainer.appendChild(particle);
+            setTimeout(() => particle.remove(), duration * 1000);
+        }
+        function generateParticles() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(createParticle, i * 200);
+            }
+        }
+        generateParticles();
+        setInterval(generateParticles, 4000);
+    </script>
     """, unsafe_allow_html=True)
-
     username = st.text_input("OPERATOR ID").strip().upper()
     password = st.text_input("PASSCODE", type="password").strip().upper()
     license = st.text_input("LICENSE KEY", type="password").strip()
-
     if st.button("INITIATE SYSTEM"):
         if username not in OPERATOR_IDS or password not in PASSWORDS or license not in VALID_KEYS:
             st.error("ACCESS DENIED: INVALID CREDENTIALS OR LICENSE KEY")
         else:
             key_data = load_key_data()
             current_time = datetime.now()
-
             if license in key_data:
                 activation_date = datetime.fromisoformat(key_data[license]["activation_date"])
                 if current_time > activation_date + timedelta(days=30):
@@ -758,17 +978,14 @@ def login_page():
                     "last_accessed": current_time.isoformat()
                 }
                 save_key_data(key_data)
-
             key_data[license]["last_accessed"] = current_time.isoformat()
             save_key_data(key_data)
-
             st.session_state.license_key = license
             st.session_state.logged_in = True
             st.session_state.page = "analyzer"
             st.session_state.df = None
             st.session_state.uploaded_file = None
             st.rerun()
-
     st.markdown("""
     <div style="color:red; text-align:center; margin-top:30px; border-top:1px solid #00FF00; padding:10px;">
         <b>TO BUY KEY: WhatsApp → 03309653269 | 03309653269</b><br>
@@ -776,9 +993,17 @@ def login_page():
     </div>
     """, unsafe_allow_html=True)
 
+def logout():
+    """Clear session state and return to login page."""
+    st.session_state.logged_in = False
+    st.session_state.page = "login"
+    st.session_state.df = None
+    st.session_state.uploaded_file = None
+    st.session_state.license_key = None
+    st.rerun()
+
 def analyzer_page():
     st.success("ANALYSIS MODULE ACTIVATED")
-
     key_data = load_key_data()
     license_key = st.session_state.get("license_key", "")
     if license_key in key_data:
@@ -806,55 +1031,79 @@ def analyzer_page():
             </div>
         </div>
         """, unsafe_allow_html=True)
-
+    if st.button("LOGOUT"):
+        logout()
     st.markdown("<h4 style='color:#00FF00'>📥 DOWNLOAD OPTIONS</h4>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns(3)
     button_placeholders = {'excel': col1.empty(), 'csv': col2.empty(), 'pdf': col3.empty()}
-
-    open_spreadsheet = st.checkbox("Open Spreadsheet After Download", value=False)
-
     st.markdown("<h4 style='color:#00FF00'>🔍 Global Search</h4>", unsafe_allow_html=True)
     search_input = st.text_input("Search by Number / IMEI / CNIC / IMSI:", key="main_table_search")
     st.markdown("---")
     uploaded_file = st.file_uploader("CHOOSE FILE TO PROCESS", type=["xlsx", "xls", "csv"])
-
     if uploaded_file:
-        with st.spinner("Loading file..."):
-            if st.session_state.df is None or st.session_state.uploaded_file != uploaded_file.name:
-                df = load_file(uploaded_file)
-                st.session_state.df = df
-                st.session_state.uploaded_file = uploaded_file.name
-            else:
-                df = st.session_state.df
-        
+        # Custom loading animation
+        loading_placeholder = st.empty()
+        with loading_placeholder:
+            with st.spinner("Loading file..."):
+                st.markdown("""
+                <div class="loader-container">
+                    <div>
+                        <div class="loader"></div>
+                        <div class="loader-text">Please Wait...</div>
+                    </div>
+                </div>
+                <script>
+                    // Ensure the loader is visible when processing starts
+                    document.querySelector('.loader-container').style.display = 'flex';
+                </script>
+                """, unsafe_allow_html=True)
+                file_hash = hashlib.sha256(uploaded_file.getvalue()).hexdigest()
+                if st.session_state.df is None or st.session_state.uploaded_file != uploaded_file.name or st.session_state.file_hash != file_hash:
+                    df = load_file(uploaded_file)
+                    st.session_state.df = df
+                    st.session_state.uploaded_file = uploaded_file.name
+                    st.session_state.file_hash = file_hash
+                else:
+                    df = st.session_state.df
+        # Clear the loading animation after processing
+        loading_placeholder.empty()
         if df is not None and not df.empty:
             try:
+                # Debug: Show DataFrame shape and columns
+                st.markdown(f"<p style='color:#00FF00'>Loaded Data: {df.shape[0]} rows, {df.shape[1]} columns</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='color:#00FF00'>Columns: {', '.join(df.columns)}</p>", unsafe_allow_html=True)
                 if search_input:
-                    pattern = re.escape(search_input.strip())
-                    df = df[df.apply(lambda row: row.astype(str).str.contains(pattern, case=False, na=False).any(), axis=1)]
+                    df = df[df.apply(lambda row: row.astype(str).str.contains(search_input, case=False, na=False, regex=False).any(), axis=1)]
                     if df.empty:
                         st.warning("No records match the search criteria.")
-
                 df = df.loc[:, ~df.columns.duplicated()]
                 df = df.reset_index(drop=True)
-
-                styled_df = df.style.set_properties(**{
+                # Limit displayed rows to 500 to avoid performance issues
+                display_df = df.head(500)
+                st.markdown(f"<p style='color:#00FF00'>Displaying first 500 rows (out of {df.shape[0]}). Download Excel/PDF for full data.</p>", unsafe_allow_html=True)
+                # Increase Pandas Styler cell limit
+                pd.set_option("styler.render.max_elements", 300000)
+                # Display DataFrame with scrolling and full-screen width
+                styled_df = display_df.style.set_properties(**{
                     'font-size': '12px',
                     'border-color': '#00FF00',
                     'border-style': 'solid',
-                    'border-width': '2px'
+                    'border-width': '2px',
+                    'background-color': '#000000',
+                    'color': '#00FF00'
                 })
-                st.dataframe(styled_df, use_container_width=True)
-
+                st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
+                st.dataframe(styled_df, use_container_width=True, height=400)
+                st.markdown('</div>', unsafe_allow_html=True)
                 st.markdown("<h4 style='color:#00FF00'>📊 SUMMARY SECTION</h4>", unsafe_allow_html=True)
                 pivot_sections = {
-                    'A-Party': ('A-Party', 'Total Calls'),
-                    'B-Party': ('B-Party', 'Total Calls'),
+                    'A-Party': ('A-Party', 'Count'),
+                    'B-Party': ('B-Party', 'Count'),
                     'IMEI': ('IMEI', 'Count'),
+                    'IMSI': ('IMSI', 'Count'),
                     'Call Type': ('Call Type', 'Count'),
-                    'SiteLocation': ('SiteLocation', 'Total Calls')
+                    'SiteLocation': ('SiteLocation', 'Count')
                 }
-
                 for column, count_name in pivot_sections.items():
                     if column not in df.columns:
                         continue
@@ -869,71 +1118,49 @@ def analyzer_page():
                         'font-size': '12px',
                         'border-color': '#00FF00',
                         'border-style': 'solid',
-                        'border-width': '2px'
+                        'border-width': '2px',
+                        'background-color': '#000000',
+                        'color': '#00FF00'
                     })
-                    st.dataframe(styled_pivot, use_container_width=True)
-
+                    st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
+                    st.dataframe(styled_pivot, use_container_width=True, height=200)
+                    st.markdown('</div>', unsafe_allow_html=True)
+                def cleanup_temp_file(file_path):
+                    try:
+                        if os.path.exists(file_path):
+                            os.unlink(file_path)
+                    except:
+                        pass
                 excel_data, excel_filename = create_excel(df, uploaded_file.name if uploaded_file else "cdr_data.xlsx", is_csv=False)
                 with button_placeholders['excel']:
                     if excel_data:
                         with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp_file:
                             tmp_file.write(excel_data.getvalue())
                             tmp_file_path = tmp_file.name
+                        atexit.register(cleanup_temp_file, tmp_file_path)
                         st.download_button("📥 DOWNLOAD EXCEL OUTPUT", excel_data, file_name=excel_filename, mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                        if open_spreadsheet:
-                            try:
-                                if platform.system() == "Windows":
-                                    os.startfile(tmp_file_path)
-                                elif platform.system() == "Darwin":
-                                    os.system(f"open {tmp_file_path}")
-                                else:
-                                    os.system(f"xdg-open {tmp_file_path}")
-                            except Exception as e:
-                                st.warning(f"Failed to open spreadsheet: {e}")
-                            finally:
-                                try:
-                                    os.unlink(tmp_file_path)
-                                except:
-                                    pass
                     else:
                         st.warning("Excel generation failed. Please check the error message above.")
-
                 csv_data, csv_filename = create_excel(df, uploaded_file.name if uploaded_file else "cdr_data_csv.xlsx", is_csv=True)
                 with button_placeholders['csv']:
                     if csv_data:
                         with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp_file:
                             tmp_file.write(csv_data.getvalue())
                             tmp_file_path = tmp_file.name
+                        atexit.register(cleanup_temp_file, tmp_file_path)
                         st.download_button("📥 DOWNLOAD CSV OUTPUT AS EXCEL", csv_data, file_name=csv_filename, mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                        if open_spreadsheet:
-                            try:
-                                if platform.system() == "Windows":
-                                    os.startfile(tmp_file_path)
-                                elif platform.system() == "Darwin":
-                                    os.system(f"open {tmp_file_path}")
-                                else:
-                                    os.system(f"xdg-open {tmp_file_path}")
-                            except Exception as e:
-                                st.warning(f"Failed to open spreadsheet: {e}")
-                            finally:
-                                try:
-                                    os.unlink(tmp_file_path)
-                                except:
-                                    pass
                     else:
                         st.warning("CSV output generation failed. Please check the error message above.")
-
                 pdf_data, pdf_filename = create_pdf(df, uploaded_file.name if uploaded_file else "cdr_data.pdf")
                 with button_placeholders['pdf']:
                     if pdf_data:
                         st.download_button("🛡️ DOWNLOAD IN PDF", pdf_data, file_name=pdf_filename, mime="application/pdf")
                     else:
                         st.warning("PDF generation failed. Please check the error message above.")
-
             except Exception as e:
                 st.error(f"Error processing file: {e}")
         else:
-            st.warning("No data loaded or file is empty.")
+            st.warning("No data loaded or file is empty. Ensure it contains valid IMEI/IMSI data.")
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
@@ -943,6 +1170,8 @@ if "df" not in st.session_state:
     st.session_state.df = None
 if "uploaded_file" not in st.session_state:
     st.session_state.uploaded_file = None
+if "file_hash" not in st.session_state:
+    st.session_state.file_hash = None
 
 if not st.session_state.logged_in:
     login_page()
